@@ -1,10 +1,7 @@
 package software.imageviewer;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.List;
 
 public class FileImageLoader implements ImageLoader {
@@ -30,22 +27,12 @@ public class FileImageLoader implements ImageLoader {
 
             @Override
             public Drawable drawable() {
-                BufferedImage image = readImage();
-                if (image == null) return null;
-                return new Drawable(image.getWidth(), image.getHeight());
+                javafx.scene.image.Image image = readImage();
+                return new Drawable((int) image.getWidth(), (int) image.getHeight());
             }
 
-            @Override
-            public java.awt.Image bitmap() {
-                return readImage();
-            }
-
-            private BufferedImage readImage() {
-                try {
-                    return ImageIO.read(imageFiles[i]);
-                } catch (IOException e) {
-                    return null;
-                }
+            private javafx.scene.image.Image readImage() {
+                return new javafx.scene.image.Image(String.valueOf(imageFiles[0]));
             }
 
             @Override

@@ -1,15 +1,11 @@
 package software.imageviewer.mock;
 
-import com.formdev.flatlaf.intellijthemes.FlatCarbonIJTheme;
-import software.imageviewer.FileImageLoader;
-import software.imageviewer.Image;
-import software.imageviewer.gui.command.NextImageCommand;
-import software.imageviewer.gui.command.PreviousImageCommand;
-import software.imageviewer.gui.swing.SwingMainFrame;
-import java.io.File;
+import software.imageviewer.gui.javafx.FXImageViewer;
 
 public class MockMain {
     public static void main(String[] args) {
+        FXImageViewer.main(args);
+/*
         try {
             FlatCarbonIJTheme.setup();
         } catch (Exception e) {
@@ -18,8 +14,10 @@ public class MockMain {
         SwingMainFrame mainFrame = new SwingMainFrame();
         Image image = new FileImageLoader(new File("src/main/resources")).load();
         mainFrame.imagePanel().image(image);
+        mainFrame.imagePanel().display();
         mainFrame.add("next image", new NextImageCommand(mainFrame.imagePanel()));
         mainFrame.add("previous image", new PreviousImageCommand(mainFrame.imagePanel()));
         mainFrame.setVisible(true);
+*/
     }
 }
