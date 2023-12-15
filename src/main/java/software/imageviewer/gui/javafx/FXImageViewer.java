@@ -24,6 +24,7 @@ public class FXImageViewer extends Application {
     private ImageDisplay imageDisplay;
     private final Map<String, Command> commands = new HashMap<>();
     private final String ResourcesFolder = "src/main/resources";
+    private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
     private Stage mainStage;
 
     @Override
@@ -85,15 +86,19 @@ public class FXImageViewer extends Application {
 
     private Node createNextButton() {
         Button button = new Button("➡");
-        button.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px");
+        button.setStyle("-fx-opacity: 0;");
         button.setOnAction(e -> commands.get("next image").execute());
+        button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
+        button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
         return button;
     }
 
     private Node createPreviousButton() {
         Button button = new Button("⬅");
-        button.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px");
+        button.setStyle("-fx-opacity: 0;");
         button.setOnAction(e -> commands.get("previous image").execute());
+        button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
+        button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
         return button;
     }
 
