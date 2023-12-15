@@ -29,9 +29,10 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
 
     @Override
     public void display() {
-        Drawable scaledDrawable = image.drawable().resize((int) stage.getWidth(), (int) stage.getHeight());
-        this.setImage(new javafx.scene.image.Image(image.name()));
+        Drawable scaledDrawable = image.drawable();
+        scaledDrawable = scaledDrawable.resize((int) stage.getWidth(), (int) stage.getHeight());
         setFitWidth(scaledDrawable.width());
         setFitHeight(scaledDrawable.height());
+        this.setImage(new javafx.scene.image.Image(image.name()));
     }
 }
