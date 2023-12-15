@@ -30,8 +30,10 @@ public class FXImageViewer extends Application {
     public void start(Stage stage) throws Exception {
         mainStage = stage;
         stage.setTitle("Image Viewer");
-        stage.setWidth(500);
-        stage.setHeight(500);
+        stage.getIcons().add(new javafx.scene.image.Image("icon.png"));
+        stage.setWidth(1400);
+        stage.setHeight(800);
+        stage.setFullScreen(true);
         stage.setScene(createScene());
 
         loadImages();
@@ -82,13 +84,15 @@ public class FXImageViewer extends Application {
     }
 
     private Node createNextButton() {
-        Button button = new Button(">");
+        Button button = new Button("➡");
+        button.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px");
         button.setOnAction(e -> commands.get("next image").execute());
         return button;
     }
 
     private Node createPreviousButton() {
-        Button button = new Button("<");
+        Button button = new Button("⬅");
+        button.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px");
         button.setOnAction(e -> commands.get("previous image").execute());
         return button;
     }
