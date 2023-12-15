@@ -32,8 +32,10 @@ public class FXImageViewer extends Application {
         mainStage = stage;
         stage.setTitle("Image Viewer");
         stage.getIcons().add(new javafx.scene.image.Image("icon.png"));
+/*
         stage.setWidth(1400);
         stage.setHeight(800);
+*/
         stage.setFullScreen(true);
         stage.setScene(createScene());
 

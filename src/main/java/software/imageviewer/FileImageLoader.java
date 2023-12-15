@@ -2,14 +2,22 @@ package software.imageviewer;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileImageLoader implements ImageLoader {
     private final List<String> imageExtensions = List.of("jpeg", "jpg", "png");
-    private final File[] imageFiles;
+    private final List<javafx.scene.image.Image> images;
 
     public FileImageLoader(File directory) {
-        this.imageFiles = directory.listFiles(withImageExtension());
+        this.images = toImages(directory.listFiles(withImageExtension()));
+    }
+
+    private List<javafx.scene.image.Image> toImages(File[] files) {
+        return Arrays.stream(files)
+                .map(file -> new javafx.scene.image.Image(file.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -18,31 +26,31 @@ public class FileImageLoader implements ImageLoader {
     }
 
     private Image imageAt(int i) {
-        if (imageFiles == null || imageFiles.length == 0) return null;
+        if (images.isEmpty()) return null;
         return new Image() {
             @Override
             public String name() {
-                return imageFiles[i].getName();
-            }
-
-            @Override
-            public Drawable drawable() {
-                javafx.scene.image.Image image = readImage();
-                return new Drawable((int) image.getWidth(), (int) image.getHeight());
-            }
-
-            private javafx.scene.image.Image readImage() {
-                return new javafx.scene.image.Image(String.valueOf(imageFiles[i].getName()));
+                return images.get(i).getUrl();
             }
 
             @Override
             public Image next() {
-                return i + 1 == imageFiles.length ? null : imageAt(i + 1);
+                return i + 1 == images.size() ? null : imageAt(i + 1);
             }
 
             @Override
             public Image previous() {
                 return i == 0 ? null : imageAt(i - 1);
+            }
+
+            @Override
+            public int height() {
+                return (int) images.get(i).getHeight();
+            }
+
+            @Override
+            public int width() {
+                return (int) images.get(i).getWidth();
             }
         };
     }
