@@ -5,7 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import software.imageviewer.FileImageLoader;
@@ -54,14 +55,23 @@ public class FXImageViewer extends Application {
     }
 
     private Scene createScene() {
-        return new Scene(createLayout());
+        return new Scene(createMainLayout());
     }
 
-    private Parent createLayout() {
-        HBox layout = new HBox();
-        layout.getChildren().add(createPreviousButton());
-        layout.getChildren().add(createImageDisplay());
-        layout.getChildren().add(createNextButton());
+    private Parent createMainLayout() {
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(createImageDisplay());
+        stackPane.getChildren().add(buttonLayout());
+        stackPane.setStyle("-fx-background-color: #000000");
+        return stackPane;
+    }
+
+    private Parent buttonLayout() {
+        BorderPane layout = new BorderPane();
+        layout.setLeft(createPreviousButton());
+        layout.setRight(createNextButton());
+        BorderPane.setAlignment(layout.getLeft(), javafx.geometry.Pos.CENTER);
+        BorderPane.setAlignment(layout.getRight(), javafx.geometry.Pos.CENTER);
         return layout;
     }
 

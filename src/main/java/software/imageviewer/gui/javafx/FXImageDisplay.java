@@ -2,11 +2,9 @@ package software.imageviewer.gui.javafx;
 
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import software.imageviewer.Drawable;
 import software.imageviewer.Image;
 import software.imageviewer.gui.ImageDisplay;
-
 
 public class FXImageDisplay extends ImageView implements ImageDisplay {
     private final Stage stage;
