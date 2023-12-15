@@ -1,12 +1,21 @@
 package software.imageviewer.gui.javafx;
 
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import software.imageviewer.Drawable;
 import software.imageviewer.Image;
 import software.imageviewer.gui.ImageDisplay;
 
 
 public class FXImageDisplay extends ImageView implements ImageDisplay {
+    private final Stage stage;
     private Image image;
+
+    public FXImageDisplay(Stage stage) {
+        setPreserveRatio(true);
+        this.stage = stage;
+    }
 
     @Override
     public Image image() {
@@ -20,6 +29,9 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
 
     @Override
     public void display() {
+        Drawable scaledDrawable = image.drawable().resize((int) stage.getWidth(), (int) stage.getHeight());
         this.setImage(new javafx.scene.image.Image(image.name()));
+        setFitWidth(scaledDrawable.width());
+        setFitHeight(scaledDrawable.height());
     }
 }

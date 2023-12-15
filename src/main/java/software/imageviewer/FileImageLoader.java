@@ -32,7 +32,7 @@ public class FileImageLoader implements ImageLoader {
             }
 
             private javafx.scene.image.Image readImage() {
-                return new javafx.scene.image.Image(String.valueOf(imageFiles[0]));
+                return new javafx.scene.image.Image(String.valueOf(imageFiles[0].getName()));
             }
 
             @Override
