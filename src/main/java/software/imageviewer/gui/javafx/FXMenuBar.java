@@ -11,12 +11,20 @@ public class FXMenuBar extends MenuBar {
     private final ImageCommandManager commandManager = ImageCommandManager.getInstance();
     public FXMenuBar() {
         this.getMenus().add(createFileMenu());
+
     }
 
     private Menu createFileMenu() {
         Menu menu = new Menu("File");
         menu.getItems().add(createOpenMenuItem());
+        menu.getItems().add(createExitMenuItem());
         return menu;
+    }
+
+    private MenuItem createExitMenuItem() {
+        MenuItem menuItem = new MenuItem("Exit");
+        menuItem.setOnAction(e -> System.exit(0));
+        return menuItem;
     }
 
     private MenuItem createOpenMenuItem() {

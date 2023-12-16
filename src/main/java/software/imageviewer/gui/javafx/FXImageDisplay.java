@@ -34,5 +34,6 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
         setFitHeight(Math.min(scene.getHeight(), displayedImage.getHeight()));
         setFitWidth(Math.min(scene.getWidth(), displayedImage.getWidth()));
         this.setImage(displayedImage);
+        setPreserveRatio(true);
     }
 }

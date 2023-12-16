@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import software.imageviewer.FileImageLoader;
@@ -23,10 +24,10 @@ import java.util.Properties;
 
 public class FXImageViewer extends Application {
     private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
-    private MenuBar menuBar = new MenuBar();
     private final Properties properties = new Properties();
     private final CommandManager commandManager = ImageCommandManager.getInstance();
     private ImageDisplay imageDisplay;
+    private MenuBar menuBar;
     private Stage mainStage;
     private Scene scene;
 
@@ -42,11 +43,11 @@ public class FXImageViewer extends Application {
         stage.setWidth(1400);
         stage.setHeight(800);
         stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> menuBar.setVisible(!newValue));
+        stage.setFullScreen(true);
 
         addCommands();
         loadImages();
 
-        stage.setFullScreen(true);
         stage.show();
     }
 
@@ -84,22 +85,27 @@ public class FXImageViewer extends Application {
     }
 
     private Parent createMainLayout() {
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(createImageDisplay());
-        stackPane.getChildren().add(outerLayout());
+        VBox stackPane = new VBox();
         stackPane.setStyle("-fx-background-color: #000000");
+        stackPane.getChildren().add(createMenuBar());
+        stackPane.getChildren().add(imageDisplayLayout());
         return stackPane;
     }
-
 
     private Node createMenuBar() {
         this.menuBar = new FXMenuBar();
         return menuBar;
     }
 
-    private Parent outerLayout() {
+    private Node imageDisplayLayout() {
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(createImageDisplay());
+        stackPane.getChildren().add(buttonLayout());
+        return stackPane;
+    }
+
+    private Node buttonLayout() {
         BorderPane layout = new BorderPane();
-        layout.setTop(createMenuBar());
         layout.setLeft(createPreviousButton());
         layout.setRight(createNextButton());
         return layout;
@@ -124,7 +130,7 @@ public class FXImageViewer extends Application {
     private Node createPreviousButton() {
         Button button = new Button("⬅");
         button.setStyle("-fx-opacity: 0;");
-        button.prefHeightProperty().bind(mainStage.heightProperty());
+        button.prefHeightProperty().bind(scene.heightProperty());
         button.setOnAction(e -> commandManager.execute(PreviousImageCommand.class));
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
