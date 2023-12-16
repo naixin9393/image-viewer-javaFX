@@ -1,8 +1,8 @@
-package software.imageviewer.mock;
+package software.imageviewer;
 
 import software.imageviewer.gui.javafx.FXImageViewer;
 
-public class MockMain {
+public class Main {
     public static void main(String[] args) {
         FXImageViewer.main(args);
     }

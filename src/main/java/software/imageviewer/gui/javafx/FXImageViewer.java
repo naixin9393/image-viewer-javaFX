@@ -5,9 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -20,7 +18,7 @@ import software.imageviewer.gui.ImageChooser;
 import software.imageviewer.gui.ImageDisplay;
 import software.imageviewer.gui.command.Command;
 import software.imageviewer.gui.command.NextImageCommand;
-import software.imageviewer.gui.command.OpenCommand;
+import software.imageviewer.gui.command.ChooseImageCommand;
 import software.imageviewer.gui.command.PreviousImageCommand;
 
 import java.io.File;
@@ -30,7 +28,7 @@ import java.util.Map;
 public class FXImageViewer extends Application {
     private final Map<String, Command> commands = new HashMap<>();
     private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
-    private MenuBar menuBar = new MenuBar();
+    private final MenuBar menuBar = new MenuBar();
     private ImageDisplay imageDisplay;
     private Stage mainStage;
     private Scene scene;
@@ -54,7 +52,7 @@ public class FXImageViewer extends Application {
     private void addCommands() {
         addCommand("previous image", new PreviousImageCommand(imageDisplay()));
         addCommand("next image", new NextImageCommand(imageDisplay()));
-        addCommand("open", new OpenCommand(createImageChooser(), imageDisplay()));
+        addCommand("open", new ChooseImageCommand(createImageChooser(), imageDisplay()));
     }
 
     private ImageChooser createImageChooser() {
