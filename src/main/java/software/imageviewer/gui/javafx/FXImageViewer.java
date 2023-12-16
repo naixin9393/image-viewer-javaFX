@@ -32,6 +32,7 @@ public class FXImageViewer extends Application {
     private MenuBar menuBar = new MenuBar();
     private ImageDisplay imageDisplay;
     private Stage mainStage;
+    private Scene scene;
 
     @Override
     public void start(Stage stage) {
@@ -64,22 +65,24 @@ public class FXImageViewer extends Application {
     }
 
     private void loadImages() {
-//        String resourcesFolder = "src/main/resources";
-        String resourcesFolder = "C:/Users/naixin9393/Desktop";
+        String resourcesFolder = "src/main/resources";
+//        String resourcesFolder = "C:/Users/naixin9393/Desktop";
         LinkedImage linkedImage = new FileImageLoader(new File(resourcesFolder)).load();
         imageDisplay.image(linkedImage);
         imageDisplay.display();
     }
 
     private Scene createScene() {
-        return new Scene(createMainLayout());
+        this.scene = new Scene(createMainLayout());
+        setKeymap();
+        return scene;
     }
 
     private Parent createMainLayout() {
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(createImageDisplay());
-        stackPane.getChildren().add(buttonLayout());
         stackPane.getChildren().add(menuBarLayout());
+        stackPane.getChildren().add(buttonLayout());
         stackPane.setStyle("-fx-background-color: #000000");
         return stackPane;
     }
@@ -126,6 +129,7 @@ public class FXImageViewer extends Application {
     private Node createNextButton() {
         Button button = new Button("➡");
         button.setStyle("-fx-opacity: 0;");
+        button.prefHeightProperty().bind(mainStage.heightProperty());
         button.setOnAction(e -> commands.get("next image").execute());
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
@@ -135,6 +139,7 @@ public class FXImageViewer extends Application {
     private Node createPreviousButton() {
         Button button = new Button("⬅");
         button.setStyle("-fx-opacity: 0;");
+        button.prefHeightProperty().bind(mainStage.heightProperty());
         button.setOnAction(e -> commands.get("previous image").execute());
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
@@ -147,5 +152,23 @@ public class FXImageViewer extends Application {
 
     private ImageDisplay imageDisplay() {
         return this.imageDisplay;
+    }
+
+    private void setKeymap() {
+        this.scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case A:
+                case LEFT:
+                    commands.get("previous image").execute();
+                    break;
+                case D:
+                case RIGHT:
+                    commands.get("next image").execute();
+                    break;
+                case F11:
+                    mainStage.setFullScreen(!mainStage.isFullScreen());
+                    break;
+            }
+        });
     }
 }
