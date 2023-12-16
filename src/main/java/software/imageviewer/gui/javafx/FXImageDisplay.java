@@ -1,8 +1,8 @@
 package software.imageviewer.gui.javafx;
 
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import javafx.stage.Stage;
 
 import software.imageviewer.LinkedImage;
 import software.imageviewer.gui.ImageDisplay;
@@ -11,13 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FXImageDisplay extends ImageView implements ImageDisplay {
-    private final Stage stage;
+    private final Scene scene;
     private LinkedImage linkedImage;
     private final Map<String, Image> preloadedImages = new HashMap<>();
 
-    public FXImageDisplay(Stage stage) {
+    public FXImageDisplay(Scene scene) {
         setPreserveRatio(true);
-        this.stage = stage;
+        this.scene = scene;
+        scene.widthProperty().addListener((observable, oldValue, newValue) -> display());
+        scene.heightProperty().addListener((observable, oldValue, newValue) -> display());
     }
 
     @Override
@@ -33,8 +35,8 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
     @Override
     public void display() {
         Image displayedImage = preloadedImages.computeIfAbsent(linkedImage.url(), n -> new Image(linkedImage.url()));
-        setFitHeight(Math.min(stage.getHeight(), linkedImage.height()));
-        setFitWidth(Math.min(stage.getWidth(), linkedImage.width()));
+        setFitHeight(Math.min(scene.getHeight(), linkedImage.height()));
+        setFitWidth(Math.min(scene.getWidth(), linkedImage.width()));
         this.setImage(displayedImage);
         preloadNext();
     }

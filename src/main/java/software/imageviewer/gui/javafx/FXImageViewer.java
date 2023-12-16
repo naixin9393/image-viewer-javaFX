@@ -10,6 +10,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -73,7 +74,8 @@ public class FXImageViewer extends Application {
     }
 
     private Scene createScene() {
-        this.scene = new Scene(createMainLayout());
+        this.scene = new Scene(new HBox(), 0, 0);
+        this.scene.setRoot(createMainLayout());
         setKeymap();
         return scene;
     }
@@ -81,47 +83,26 @@ public class FXImageViewer extends Application {
     private Parent createMainLayout() {
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(createImageDisplay());
-        stackPane.getChildren().add(menuBarLayout());
-        stackPane.getChildren().add(buttonLayout());
+        stackPane.getChildren().add(outerLayout());
         stackPane.setStyle("-fx-background-color: #000000");
         return stackPane;
     }
 
-    private Node menuBarLayout() {
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(createMenuBar());
-        return borderPane;
-    }
 
     private Node createMenuBar() {
-        this.menuBar = new MenuBar();
-        menuBar.getMenus().add(createFileMenu());
-        return menuBar;
+        return new FXMenuBar();
     }
 
-    private Menu createFileMenu() {
-        Menu menu = new Menu("File");
-        menu.getItems().add(createOpenMenuItem());
-        return menu;
-    }
-
-    private MenuItem createOpenMenuItem() {
-        MenuItem menuItem = new MenuItem("Open");
-        menuItem.setOnAction(e -> commands.get("open").execute());
-        return menuItem;
-    }
-
-    private Parent buttonLayout() {
+    private Parent outerLayout() {
         BorderPane layout = new BorderPane();
+        layout.setTop(createMenuBar());
         layout.setLeft(createPreviousButton());
         layout.setRight(createNextButton());
-        BorderPane.setAlignment(layout.getLeft(), javafx.geometry.Pos.CENTER);
-        BorderPane.setAlignment(layout.getRight(), javafx.geometry.Pos.CENTER);
         return layout;
     }
 
     private Node createImageDisplay() {
-        FXImageDisplay imageDisplay = new FXImageDisplay(mainStage);
+        FXImageDisplay imageDisplay = new FXImageDisplay(this.scene);
         this.imageDisplay = imageDisplay;
         return imageDisplay;
     }
@@ -129,7 +110,7 @@ public class FXImageViewer extends Application {
     private Node createNextButton() {
         Button button = new Button("➡");
         button.setStyle("-fx-opacity: 0;");
-        button.prefHeightProperty().bind(mainStage.heightProperty());
+        button.prefHeightProperty().bind(scene.heightProperty());
         button.setOnAction(e -> commands.get("next image").execute());
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
