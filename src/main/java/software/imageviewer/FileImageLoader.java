@@ -5,25 +5,44 @@ import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javafx.scene.image.Image;
 
 public class FileImageLoader implements ImageLoader {
     private final List<String> imageExtensions = List.of("jpeg", "jpg", "png");
     private final List<Image> images;
+    private final File originalFile;
 
-    public FileImageLoader(File directory) {
-        this.images = toImages(directory.listFiles(withImageExtension()));
+    public FileImageLoader(File file) {
+        this.originalFile = file;
+        if (file.isDirectory())
+            this.images = toImages(file.listFiles(withImageExtension()));
+        else
+            this.images = toImages(new File(file.getParent()).listFiles(withImageExtension()));
     }
 
     private List<Image> toImages(File[] files) {
         return Arrays.stream(files)
-                .map(file -> new Image(file.getName()))
+                .map(file -> new Image("file:" + file.getAbsolutePath()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public LinkedImage load() {
-        return new MyLinkedImage(0);
+        if (originalFile.isDirectory())
+            return new MyLinkedImage(0);
+        else
+            return searchFile(originalFile);
+    }
+
+    private LinkedImage searchFile(File originalFile) {
+        LinkedImage image = new MyLinkedImage(0);
+        while (image != null) {
+            if (image.url().equals("file:" + originalFile.getAbsolutePath().replace("\\", "/")))
+                return image;
+            image = image.next();
+        }
+        return null;
     }
 
     class MyLinkedImage implements LinkedImage {

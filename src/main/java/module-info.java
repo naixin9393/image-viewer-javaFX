@@ -7,5 +7,6 @@ module image.viewer {
 
     exports software.imageviewer.gui.javafx;
     exports software.imageviewer.gui.command;
+    exports software.imageviewer.gui;
     exports software.imageviewer;
 }
