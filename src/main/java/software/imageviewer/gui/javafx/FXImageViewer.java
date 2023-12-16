@@ -16,64 +16,68 @@ import software.imageviewer.FileImageLoader;
 import software.imageviewer.LinkedImage;
 import software.imageviewer.gui.ImageChooser;
 import software.imageviewer.gui.ImageDisplay;
-import software.imageviewer.gui.command.Command;
-import software.imageviewer.gui.command.NextImageCommand;
-import software.imageviewer.gui.command.ChooseImageCommand;
-import software.imageviewer.gui.command.PreviousImageCommand;
+import software.imageviewer.gui.command.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
 public class FXImageViewer extends Application {
-    private final Map<String, Command> commands = new HashMap<>();
     private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
     private final MenuBar menuBar = new MenuBar();
+    private final Properties properties = new Properties();
+    private final CommandManager commandManager = ImageCommandManager.getInstance();
     private ImageDisplay imageDisplay;
     private Stage mainStage;
     private Scene scene;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         mainStage = stage;
-        stage.setTitle("Image Viewer");
-        stage.getIcons().add(new Image("icon.png"));
+        String propertiesFile = "application.properties";
+        properties.load(FXImageViewer.class.getClassLoader().getResourceAsStream(propertiesFile));
+
+        stage.setTitle(appTitle());
+        stage.getIcons().add(appIcon());
         stage.setWidth(1400);
         stage.setHeight(800);
-        stage.setScene(createScene());
         stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> menuBar.setVisible(!newValue));
         stage.setFullScreen(true);
+        stage.setScene(createScene());
 
-        loadImages();
         addCommands();
+        loadImages();
         stage.show();
     }
 
     private void addCommands() {
-        addCommand("previous image", new PreviousImageCommand(imageDisplay()));
-        addCommand("next image", new NextImageCommand(imageDisplay()));
-        addCommand("open", new ChooseImageCommand(createImageChooser(), imageDisplay()));
+        ImageCommandManager.getInstance()
+                .add(PreviousImageCommand.class, new PreviousImageCommand(imageDisplay))
+                .add(NextImageCommand.class, new NextImageCommand(imageDisplay))
+                .add(ChooseImageCommand.class, new ChooseImageCommand(createImageChooser(), imageDisplay));
+    }
+
+    private String appTitle() {
+        return properties.getProperty("app.title");
+    }
+
+    private Image appIcon() {
+        return new Image(properties.getProperty("app.icon"));
     }
 
     private ImageChooser createImageChooser() {
         return new FXImageChooser();
     }
 
-    private void addCommand(String name, Command command) {
-        commands.put(name, command);
-    }
-
     private void loadImages() {
         String resourcesFolder = "src/main/resources";
-//        String resourcesFolder = "C:/Users/naixin9393/Desktop";
         LinkedImage linkedImage = new FileImageLoader(new File(resourcesFolder)).load();
         imageDisplay.image(linkedImage);
         imageDisplay.display();
     }
 
     private Scene createScene() {
-        this.scene = new Scene(new HBox(), 0, 0);
-        this.scene.setRoot(createMainLayout());
+        scene = new Scene(new HBox(), 0, 0);
+        scene.setRoot(createMainLayout());
         setKeymap();
         return scene;
     }
@@ -100,7 +104,7 @@ public class FXImageViewer extends Application {
     }
 
     private Node createImageDisplay() {
-        FXImageDisplay imageDisplay = new FXImageDisplay(this.scene);
+        FXImageDisplay imageDisplay = new FXImageDisplay(scene);
         this.imageDisplay = imageDisplay;
         return imageDisplay;
     }
@@ -109,7 +113,7 @@ public class FXImageViewer extends Application {
         Button button = new Button("➡");
         button.setStyle("-fx-opacity: 0;");
         button.prefHeightProperty().bind(scene.heightProperty());
-        button.setOnAction(e -> commands.get("next image").execute());
+        button.setOnAction(e -> commandManager.execute(NextImageCommand.class));
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
         return button;
@@ -119,7 +123,7 @@ public class FXImageViewer extends Application {
         Button button = new Button("⬅");
         button.setStyle("-fx-opacity: 0;");
         button.prefHeightProperty().bind(mainStage.heightProperty());
-        button.setOnAction(e -> commands.get("previous image").execute());
+        button.setOnAction(e -> commandManager.execute(PreviousImageCommand.class));
         button.setOnMouseEntered(event -> button.setStyle(buttonStyle));
         button.setOnMouseExited(event -> button.setStyle("-fx-opacity: 0;"));
         return button;
@@ -129,20 +133,16 @@ public class FXImageViewer extends Application {
         launch(args);
     }
 
-    private ImageDisplay imageDisplay() {
-        return this.imageDisplay;
-    }
-
     private void setKeymap() {
-        this.scene.setOnKeyPressed(event -> {
+        scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case A:
                 case LEFT:
-                    commands.get("previous image").execute();
+                    commandManager.execute(PreviousImageCommand.class);
                     break;
                 case D:
                 case RIGHT:
-                    commands.get("next image").execute();
+                    commandManager.execute(NextImageCommand.class);
                     break;
                 case F11:
                     mainStage.setFullScreen(!mainStage.isFullScreen());
