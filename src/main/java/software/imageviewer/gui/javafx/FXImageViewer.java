@@ -23,7 +23,7 @@ import java.util.Properties;
 
 public class FXImageViewer extends Application {
     private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
-    private final MenuBar menuBar = new MenuBar();
+    private MenuBar menuBar = new MenuBar();
     private final Properties properties = new Properties();
     private final CommandManager commandManager = ImageCommandManager.getInstance();
     private ImageDisplay imageDisplay;
@@ -38,14 +38,15 @@ public class FXImageViewer extends Application {
 
         stage.setTitle(appTitle());
         stage.getIcons().add(appIcon());
+        stage.setScene(createScene());
         stage.setWidth(1400);
         stage.setHeight(800);
         stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> menuBar.setVisible(!newValue));
-        stage.setFullScreen(true);
-        stage.setScene(createScene());
 
         addCommands();
         loadImages();
+
+        stage.setFullScreen(true);
         stage.show();
     }
 
@@ -92,7 +93,8 @@ public class FXImageViewer extends Application {
 
 
     private Node createMenuBar() {
-        return new FXMenuBar();
+        this.menuBar = new FXMenuBar();
+        return menuBar;
     }
 
     private Parent outerLayout() {

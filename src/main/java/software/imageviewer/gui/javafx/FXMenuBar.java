@@ -4,7 +4,11 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
+import software.imageviewer.gui.command.ChooseImageCommand;
+import software.imageviewer.gui.command.ImageCommandManager;
+
 public class FXMenuBar extends MenuBar {
+    private final ImageCommandManager commandManager = ImageCommandManager.getInstance();
     public FXMenuBar() {
         this.getMenus().add(createFileMenu());
     }
@@ -17,7 +21,7 @@ public class FXMenuBar extends MenuBar {
 
     private MenuItem createOpenMenuItem() {
         MenuItem menuItem = new MenuItem("Open");
-        //menuItem.setOnAction(e -> commands.get("open").execute());
+        menuItem.setOnAction(e -> commandManager.execute(ChooseImageCommand.class));
         return menuItem;
     }
 }

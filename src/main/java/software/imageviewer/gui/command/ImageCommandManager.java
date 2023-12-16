@@ -6,8 +6,7 @@ import java.util.Map;
 public class ImageCommandManager implements CommandManager {
     private static final ImageCommandManager instance = new ImageCommandManager();
 
-    private ImageCommandManager() {
-    }
+    private ImageCommandManager() {}
 
     public static ImageCommandManager getInstance() {
         return instance;

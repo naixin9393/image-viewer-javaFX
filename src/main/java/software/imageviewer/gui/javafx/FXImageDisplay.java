@@ -7,13 +7,9 @@ import javafx.scene.image.Image;
 import software.imageviewer.LinkedImage;
 import software.imageviewer.gui.ImageDisplay;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class FXImageDisplay extends ImageView implements ImageDisplay {
     private final Scene scene;
     private LinkedImage linkedImage;
-    private final Map<String, Image> preloadedImages = new HashMap<>();
 
     public FXImageDisplay(Scene scene) {
         setPreserveRatio(true);
@@ -34,18 +30,9 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
 
     @Override
     public void display() {
-        Image displayedImage = preloadedImages.computeIfAbsent(linkedImage.url(), n -> new Image(linkedImage.url()));
-        setFitHeight(Math.min(scene.getHeight(), linkedImage.height()));
-        setFitWidth(Math.min(scene.getWidth(), linkedImage.width()));
+        Image displayedImage = new Image(linkedImage.url());
+        setFitHeight(Math.min(scene.getHeight(), displayedImage.getHeight()));
+        setFitWidth(Math.min(scene.getWidth(), displayedImage.getWidth()));
         this.setImage(displayedImage);
-        preloadNext();
-    }
-
-    private void preloadNext() {
-        if (linkedImage.next() == null)
-            return;
-        if (preloadedImages.get(linkedImage.next().url()) != null)
-            return;
-        preloadedImages.put(linkedImage.next().url(), new Image(linkedImage.next().url()));
     }
 }

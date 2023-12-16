@@ -4,96 +4,61 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javafx.scene.image.Image;
 
 public class FileImageLoader implements ImageLoader {
     private final List<String> imageExtensions = List.of("jpeg", "jpg", "png");
-    private final List<Image> images;
+    private final String[] images;
     private final File originalFile;
 
     public FileImageLoader(File file) {
         this.originalFile = file;
         if (file.isDirectory())
-            this.images = toImages(file.listFiles(withImageExtension()));
+            this.images = toString(file.listFiles(withImageExtension()));
         else
-            this.images = toImages(new File(file.getParent()).listFiles(withImageExtension()));
+            this.images = toString(new File(file.getParent()).listFiles(withImageExtension()));
     }
 
-    private List<Image> toImages(File[] files) {
+    private String[] toString(File[] files) {
         return Arrays.stream(files)
-                .map(file -> new Image("file:" + file.getAbsolutePath()))
-                .collect(Collectors.toList());
+                .map(file -> "file:" + file.getAbsolutePath())
+                .toList()
+                .toArray(new String[0]);
     }
 
     @Override
     public LinkedImage load() {
         if (originalFile.isDirectory())
-            return new MyLinkedImage(0);
+            return imageAt(0);
         else
             return searchFile(originalFile);
     }
 
     private LinkedImage searchFile(File originalFile) {
-        LinkedImage image = new MyLinkedImage(0);
-        while (image != null) {
-            if (image.url().equals("file:" + originalFile.getAbsolutePath().replace("\\", "/")))
-                return image;
-            image = image.next();
+        for (int i = 0; i < images.length; i++) {
+            if (images[i].endsWith(originalFile.getName()))
+                return imageAt(i);
         }
-        return null;
+        throw new RuntimeException("File not found");
     }
 
-    class MyLinkedImage implements LinkedImage {
-        private String url;
-        private final MyLinkedImage previous;
-        private MyLinkedImage next;
-        private int width;
-        private int height;
+    private LinkedImage imageAt(int i) {
+        return new LinkedImage(){
 
-        public MyLinkedImage(int i) {
-            this.previous = null;
-            setFields(i);
-        }
+            @Override
+            public String url() {
+                return images[i];
+            }
 
-        private MyLinkedImage(MyLinkedImage previous, int i) {
-            this.previous = previous;
-            setFields(i);
-        }
+            @Override
+            public LinkedImage next() {
+                return i + 1 == images.length ? null : imageAt(i + 1);
+            }
 
-        private void setFields(int i) {
-            this.next = i + 1 == images.size() ? null : new MyLinkedImage(this, i + 1);
-            Image image = images.get(i);
-            this.url = image.getUrl();
-            this.width = (int) image.getWidth();
-            this.height = (int) image.getHeight();
-        }
-
-        @Override
-        public String url() {
-            return this.url;
-        }
-
-        @Override
-        public LinkedImage next() {
-            return this.next;
-        }
-
-        @Override
-        public LinkedImage previous() {
-            return this.previous;
-        }
-
-        @Override
-        public int height() {
-            return this.height;
-        }
-
-        @Override
-        public int width() {
-            return this.width;
-        }
+            @Override
+            public LinkedImage previous() {
+                return i == 0 ? null : imageAt(i - 1);
+            }
+        };
     }
 
     private FileFilter withImageExtension() {
