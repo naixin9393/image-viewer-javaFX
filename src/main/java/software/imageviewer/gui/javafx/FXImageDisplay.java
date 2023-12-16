@@ -1,8 +1,10 @@
 package software.imageviewer.gui.javafx;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import software.imageviewer.Image;
+
+import software.imageviewer.LinkedImage;
 import software.imageviewer.gui.ImageDisplay;
 
 import java.util.HashMap;
@@ -10,9 +12,8 @@ import java.util.Map;
 
 public class FXImageDisplay extends ImageView implements ImageDisplay {
     private final Stage stage;
-    private Image image;
-    private final Map<String, javafx.scene.image.Image> preloadedImages = new HashMap<>();
-
+    private LinkedImage linkedImage;
+    private final Map<String, Image> preloadedImages = new HashMap<>();
 
     public FXImageDisplay(Stage stage) {
         setPreserveRatio(true);
@@ -20,29 +21,29 @@ public class FXImageDisplay extends ImageView implements ImageDisplay {
     }
 
     @Override
-    public Image image() {
-        return this.image;
+    public LinkedImage image() {
+        return this.linkedImage;
     }
 
     @Override
-    public void image(Image image) {
-        this.image = image;
+    public void image(LinkedImage linkedImage) {
+        this.linkedImage = linkedImage;
     }
 
     @Override
     public void display() {
-        javafx.scene.image.Image displayedImage = preloadedImages.computeIfAbsent(image.name(), n -> new javafx.scene.image.Image(image.name()));
-        setFitHeight(Math.min(stage.getHeight(), image.height()));
-        setFitWidth(Math.min(stage.getWidth(), image.width()));
+        Image displayedImage = preloadedImages.computeIfAbsent(linkedImage.url(), n -> new Image(linkedImage.url()));
+        setFitHeight(Math.min(stage.getHeight(), linkedImage.height()));
+        setFitWidth(Math.min(stage.getWidth(), linkedImage.width()));
         this.setImage(displayedImage);
         preloadNext();
     }
 
     private void preloadNext() {
-        if (image.next() == null)
+        if (linkedImage.next() == null)
             return;
-        if (preloadedImages.get(image.next().name()) != null)
+        if (preloadedImages.get(linkedImage.next().url()) != null)
             return;
-        preloadedImages.put(image.next().name(), new javafx.scene.image.Image(image.next().name()));
+        preloadedImages.put(linkedImage.next().url(), new Image(linkedImage.next().url()));
     }
 }

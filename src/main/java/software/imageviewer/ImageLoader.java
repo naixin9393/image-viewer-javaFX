@@ -1,5 +1,5 @@
 package software.imageviewer;
 
 public interface ImageLoader {
-    Image load();
+    LinkedImage load();
 }

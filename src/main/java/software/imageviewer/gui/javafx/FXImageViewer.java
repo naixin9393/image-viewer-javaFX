@@ -5,12 +5,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import software.imageviewer.FileImageLoader;
-import software.imageviewer.Image;
+import software.imageviewer.LinkedImage;
 import software.imageviewer.gui.ImageDisplay;
 import software.imageviewer.gui.command.Command;
 import software.imageviewer.gui.command.NextImageCommand;
@@ -23,19 +24,16 @@ import java.util.Map;
 public class FXImageViewer extends Application {
     private ImageDisplay imageDisplay;
     private final Map<String, Command> commands = new HashMap<>();
-    private final String ResourcesFolder = "src/main/resources";
     private final String buttonStyle = "-fx-opacity: 1;-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px";
     private Stage mainStage;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         mainStage = stage;
         stage.setTitle("Image Viewer");
-        stage.getIcons().add(new javafx.scene.image.Image("icon.png"));
-/*
+        stage.getIcons().add(new Image("icon.png"));
         stage.setWidth(1400);
         stage.setHeight(800);
-*/
         stage.setFullScreen(true);
         stage.setScene(createScene());
 
@@ -54,8 +52,10 @@ public class FXImageViewer extends Application {
     }
 
     private void loadImages() {
-        Image image = new FileImageLoader(new File(ResourcesFolder)).load();
-        imageDisplay.image(image);
+        String resourcesFolder = "src/main/resources";
+//        String resourcesFolder = "D:\\Imágenes\\pau";
+        LinkedImage linkedImage = new FileImageLoader(new File(resourcesFolder)).load();
+        imageDisplay.image(linkedImage);
         imageDisplay.display();
     }
 

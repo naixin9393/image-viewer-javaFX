@@ -1,9 +1,9 @@
 package software.imageviewer.gui;
 
-import software.imageviewer.Image;
+import software.imageviewer.LinkedImage;
 
 public interface ImageDisplay {
-    Image image();
-    void image(Image image);
+    LinkedImage image();
+    void image(LinkedImage linkedImage);
     void display();
 }
