@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import software.imageviewer.FileImageLoader;
 import software.imageviewer.LinkedImage;
+import software.imageviewer.gui.AboutDialog;
 import software.imageviewer.gui.ImageChooser;
 import software.imageviewer.gui.ImageDisplay;
 import software.imageviewer.gui.command.*;
@@ -55,11 +56,16 @@ public class FXImageViewer extends Application {
         ImageCommandManager.getInstance()
                 .add(PreviousImageCommand.class, new PreviousImageCommand(imageDisplay))
                 .add(NextImageCommand.class, new NextImageCommand(imageDisplay))
-                .add(ChooseImageCommand.class, new ChooseImageCommand(createImageChooser(), imageDisplay));
+                .add(ChooseImageCommand.class, new ChooseImageCommand(createImageChooser(), imageDisplay))
+                .add(OpenAboutDialogCommand.class, new OpenAboutDialogCommand(createAboutDialog()));
+    }
+
+    private AboutDialog createAboutDialog() {
+        return new FXAboutDialog();
     }
 
     private String appTitle() {
-        return properties.getProperty("app.title");
+        return properties.getProperty("app.name");
     }
 
     private Image appIcon() {
